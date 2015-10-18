@@ -1,0 +1,47 @@
+V	mV	Main (battery) voltage
+VS	mV	Auxiliary (starter) voltage
+VM	mV	Mid-point voltage of the battery bank
+DM	‰	Mid-point deviation of the battery bank
+VPV	mV	Panel voltage
+PPV	W	Panel power
+I	mA	Battery current
+IL	mA	Load current
+LOAD	-	Load output state (ON/OFF)
+T	C	Battery temperature
+P	W	Instantaneous power
+CE	mAh 	Consumed Amp Hours
+SOC	‰	State-of-charge
+TTG	Minutes	Time-to-go
+Alarm	-	Alarm condition active
+Relay	-	Relay state
+AR	-	Alarm reason
+H1	mAh	Depth of the deepest discharge
+H2	mAh	Depth of the last discharge
+H3	mAh	Depth of the average discharge
+H4	-	Number of charge cycles
+H5	-	Number of full discharges
+H6	mAh	Cumulative Amp Hours drawn
+H7	mV	Minimum main (battery) voltage
+H8	mV	Maximum main (battery) voltage
+H9	Seconds	Number of seconds since last full charge
+H10	-	Number of automatic synchronizations
+H11	-	Number of low main voltage alarms
+H12	-	Number of high main voltage alarms
+H13	-	Number of low auxiliary voltage alarms
+H14	-	Number of high auxiliary voltage alarms
+H15	mV	Minimum auxiliary (battery) voltage
+H16	mV	Maximum auxiliary (battery) voltage
+H17	0.01 kWh	Amount of discharged energy
+H18	0.01 kWh	Amount of charged energy
+H19	0.01 kWh	Yield total (user resettable counter)
+H20	0.01 kWh	Yield today
+H21	W    	Maximum power today
+H22	0.01 kWh	Yield yesterday
+H23	W    		Maximum power yesterday
+ERR	-		Error code
+CS	-		Charger state
+BMV	-		Model description (deprecated)
+FW	-		Firmware version
+PID	-		Product ID
+SER#	-		Serial number
+HSDS	-		Day sequence number (0..364)

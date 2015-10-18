@@ -1,0 +1,13 @@
+{application, ve_direct,
+ [
+  {description, "VE Direct interface"},
+  {vsn, "1.0"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+		  uart
+                 ]},
+  {mod, { ve_direct_app, []}},
+  {env, []}
+ ]}.
