@@ -26,8 +26,6 @@
 
 -behaviour(gen_server).
 
--include_lib("lager/include/log.hrl").
-
 %% API
 -export([start_link/0]).
 -export([start_link/1]).
@@ -101,7 +99,7 @@ init(Opts0) ->
 	       Baud1 -> Baud1
 	   end,
     if Device =:= false; Device =:= "" ->
-	    ?error("ve_direct: missing device argument"),
+	    lager:error("ve_direct: missing device argument"),
 	    {stop, einval};
        true ->
 	    S = #s{ device = Device,
@@ -109,7 +107,7 @@ init(Opts0) ->
 		    retry_interval = RetryInterval,
 		    dict = dict:new()
 		  },
-	    ?info("ve_direct: using device ~s@~w\n", 
+	    lager:info("ve_direct: using device ~s@~w\n", 
 		  [Device, Baud]),
 	    case open(S) of
 		{ok, S1} -> {ok, S1};
@@ -190,7 +188,7 @@ handle_info({timeout,TRef,reopen},S) when TRef =:= S#s.retry_timer ->
     end;
 
 handle_info(_Info, S) ->
-    ?debug("ve_direct_srv: got info ~p", [_Info]),
+    lager:debug("ve_direct_srv: got info ~p", [_Info]),
     {noreply, S}.
 
 %%--------------------------------------------------------------------
@@ -236,13 +234,13 @@ handle_input(Buffer, S) ->
 		    S1 = handle_fields(Fields, S),
 		    S1#s { buf = Buffer1 };
 		_I ->
-		    ?error("ve_direct: checksum error"),
+		    lager:error("ve_direct: checksum error"),
 		    S#s { buf = Buffer1 }
 	    end;
 	_ ->
 	    if byte_size(Buffer) > 2048 ->
 		    %% maybe sync?
-		    ?error("ve_direct: buffer to large, reset"),
+		    lager:error("ve_direct: buffer to large, reset"),
 		    reopen(S);
 	       true ->
 		    S#s { buf = Buffer }
@@ -257,12 +255,12 @@ handle_fields_([<<>> | Fs], S) ->
 handle_fields_([F | Fs], S) ->
     case binary:split(F, <<"\t">>) of
 	[Field, Value] ->
-	    ?debug("~s = ~s\n", [Field, Value]),
+	    lager:debug("~s = ~s\n", [Field, Value]),
 	    %% FIXME: parse value and normalize!
 	    Dict1 = dict:store(Field, Value, S#s.dict),
 	    handle_fields(Fs, S#s { dict = Dict1 });
 	_ ->
-	    ?warning("bad field ~s", [F]),
+	    lager:warning("bad field ~s", [F]),
 	    handle_fields_(Fs, S)
     end;
 handle_fields_([], S) ->
@@ -278,10 +276,10 @@ open(S0=#s {device = DeviceName, baud_rate = Baud }) ->
 		{csize, 8}, {stopb,1}, {parity,none}, {active, once}],
     case uart:open(DeviceName, UartOpts) of
 	{ok,Uart} ->
-	    ?debug("ve_direct_srv:open: ~s@~w", [DeviceName,Baud]),
+	    lager:debug("ve_direct_srv:open: ~s@~w", [DeviceName,Baud]),
 	    {ok, S0#s { uart = Uart }};
 	{error,E} when E =:= eaccess; E =:= enoent ->
-	    ?debug("ve_direct_srv:open: ~s@~w  error ~w, will try again "
+	    lager:debug("ve_direct_srv:open: ~s@~w  error ~w, will try again "
 		   "in ~p msecs.", [DeviceName,Baud,E,S0#s.retry_interval]),
 	    {ok, reopen(S0)};
 	Error ->
@@ -291,9 +289,9 @@ open(S0=#s {device = DeviceName, baud_rate = Baud }) ->
 
 reopen(S) ->
     if S#s.uart =/= undefined ->
-	    ?debug("ve_direct_srv: closing device ~s", [S#s.device]),
+	    lager:debug("ve_direct_srv: closing device ~s", [S#s.device]),
 	    R = uart:close(S#s.uart),
-	    ?debug("ve_direct_srv: closed ~p", [R]),
+	    lager:debug("ve_direct_srv: closed ~p", [R]),
 	    R;
        true ->
 	    ok
